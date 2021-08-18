@@ -1,4 +1,10 @@
 {
+  "name": "hoshino-mochiru",
+  "description": "A discord bot",
+  "version": "0.0.1",
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0"
