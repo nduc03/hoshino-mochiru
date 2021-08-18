@@ -2,3 +2,4 @@
 node_modules
 *.code-workspace
 draft.*
+.eslintrc.json
