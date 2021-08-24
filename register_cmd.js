@@ -22,6 +22,9 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
         if (process.argv[2] === 'release') {
             commandRoutes = Routes.applicationCommands(process.env.CLIENT_ID)
         }
+        if (process.argv[2] === 'fast-release'){
+            commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.RELEASE_GUILD_ID)
+        }
         else {
             commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.DEV_GUILD_ID)
         }

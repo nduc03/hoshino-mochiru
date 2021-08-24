@@ -20,5 +20,5 @@ app.get('/privacy_vi', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`Website open at port: ${port}`)
 })
