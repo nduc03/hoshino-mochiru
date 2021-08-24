@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot console</title>
+
+    <style>
+        body {
+            text-align: center;
+        }
+
+        .container * {
+            vertical-align: top;
+            margin: 0 auto;
+        }
+
+        /* #msgEmbed {
+            text-align: center;
+        } */
+    </style>
+</head>
+
+<body>
+    <form id="msgEmbed" action="/admin" method="POST">
+        Color: <input type="color" id="color" name="color" width="100"><br><br>
+        Title: <input type="text" id="title" name="title" placeholder="Title" autocomplete="off" required><br><br>
+        <div class="container">
+            Description: <textarea name="description" id="description" cols="30" rows="5" form="msgEmbed"></textarea>
+        </div><br>
+        Channel id: <input type="text" id="channel" name="channel" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
