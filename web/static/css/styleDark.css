@@ -14,7 +14,7 @@ a:hover {
 }
 
 
-.button, .button:visited {
+.button, .button:visited, button {
     background-color: none;
     border: solid cyan 2px;
     border-radius: 15px;
@@ -26,18 +26,11 @@ a:hover {
     font-size: 15px;
     margin: 4px 2px;
     cursor: pointer;
+    transition: 300ms;
 }
 
 .blur {
     color: #404040;
-}
-
-#theme_button {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 64px;
-    height: 64px;
 }
 
 .button:hover {

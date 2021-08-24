@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,8 +8,24 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/styleDark.css">
     <title>Add Hoshino Mochiru to your server</title>
+
+    <script>
+        function copy() {
+            navigator.clipboard.writeText("https://discord.com/api/oauth2/authorize?client_id=875546521460957255&permissions=268609536&scope=bot%20applications.commands")
+            alert("Authorization link copied.")
+        }
+    </script>
 </head>
+
 <body>
-    Nothing here
+
+    <div>
+        <a class="button"
+            href="https://discord.com/api/oauth2/authorize?client_id=875546521460957255&permissions=268609536&scope=bot%20applications.commands"
+            target="_blank" rel="noopener noreferrer">Get this bot now</a>
+        or just
+        <a class="button" href="javascript:copy()">Copy bot authorization link</a>
+    </div>
 </body>
+
 </html>

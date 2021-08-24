@@ -1,7 +1,7 @@
 {
-  "name": "hoshino-mochiru",
-  "description": "A discord bot",
-  "version": "0.0.1",
+  "name": "hoshino-mochiru-project",
+  "description": "A discord bot project (bot's website included)",
+  "version": "0.0.2",
   "engines": {
     "node": "16.x"
   },
