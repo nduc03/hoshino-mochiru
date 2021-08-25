@@ -1,7 +1,7 @@
 const express = require('express')
 const path = require('path')
-const fs = require('fs')
 const axios = require('axios')
+const cookieParser = require('cookie-parser')
 
 require('dotenv').config()
 
@@ -14,23 +14,29 @@ app.use(
         extended: true
     })
 )
+app.use(cookieParser())
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
-    fs.createReadStream(path.join(__dirname, 'html/index.html')).pipe(res)
+    res.sendFile(path.join(__dirname, 'html/index.html'))
 })
 
 app.get('/term_vi', (req, res) => {
-    fs.createReadStream(path.join(__dirname, 'html/term_vi.html')).pipe(res)
+    res.sendFile(path.join(__dirname, 'html/term_vi.html'))
 })
 
 app.get('/privacy_vi', (req, res) => {
-    fs.createReadStream(path.join(__dirname, 'html/privacy_vi.html')).pipe(res)
+    res.sendFile(path.join(__dirname, 'html/privacy_vi.html'))
+})
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'html/login.html'))
 })
 
 app.get('/admin', (req, res) => {
-    fs.createReadStream(path.join(__dirname, 'html/bot_admin.html')).pipe(res)
+    //  TODO: Check authentication here.
+    res.sendFile(path.join(__dirname, 'html/bot_admin.html'))
 })
 
 app.post('/admin', (req, res) => {
@@ -43,10 +49,8 @@ app.post('/admin', (req, res) => {
     }
     console.log(embedOptions)
     if (!isNaN(embedForm.channel)) {
-        const channel = embedForm.channel
-        delete embedForm.channel
         axios.post(
-            `https://discord.com/api/v9/channels/${channel}/messages`,
+            `https://discord.com/api/v9/channels/${embedForm.channel}/messages`,
             { embeds: [embedOptions] },
             { headers: { 'Authorization': `Bot ${process.env.TOKEN}` } },
         ).then(response => {
