@@ -18,6 +18,7 @@ app.use(cookieParser())
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs')
 
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'html/index.html'))
 })
@@ -65,6 +66,15 @@ app.post('/admin', (req, res) => {
         res.render('fail')
     }
 })
+
+app.use(function (req, res) {
+    res.status(404).send("404")
+})
+app.use(function (err, req, res) {
+    console.error(err.stack)
+    res.status(500).send('500')
+})
+
 
 app.listen(port, () => {
     console.log(`Website open at port: ${port}`)
