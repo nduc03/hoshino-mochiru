@@ -3,7 +3,7 @@ const { Routes } = require('discord-api-types/v9')
 const fs = require('fs')
 require('dotenv').config()
 
-const commands = []
+var commands = []
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -22,12 +22,17 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
         if (process.argv[2] === 'release') {
             commandRoutes = Routes.applicationCommands(process.env.CLIENT_ID)
         }
-        if (process.argv[2] === 'fast-release'){
+        else if (process.argv[2] === 'fast-release'){
             commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.RELEASE_GUILD_ID)
         }
-        else {
+        else if (process.argv[2] === 'test' || process.argv[2] === undefined) {
             commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.DEV_GUILD_ID)
         }
+
+        if (process.argv[3] === 'delete') {
+            commands = []
+        }
+
         await rest.put(
             commandRoutes,
             { body: commands },
