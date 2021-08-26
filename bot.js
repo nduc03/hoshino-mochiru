@@ -28,7 +28,7 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
-    client.user.setPresence({ activities: [{ name: 'game' }], status: 'dnd' });
+    client.user.setPresence({ activities: [{ name: 'đùa với ba mẹ' }] });
 })
 
 client.on('interactionCreate', async interaction => {
