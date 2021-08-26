@@ -28,14 +28,7 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
-})
-
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return
-
-    if (interaction.commandName === 'ping') {
-        await interaction.reply('Pong!')
-    }
+    client.user.setPresence({ activities: [{ name: 'game' }], status: 'dnd' });
 })
 
 client.on('interactionCreate', async interaction => {
