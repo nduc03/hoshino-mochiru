@@ -39,7 +39,7 @@ async function sendWelcome(_client, channelId, user) {
 
 var callTimes = 0
 var welcomedPeople = []
-const welcomeChannel = '770224161720631307'
+const welcomeChannel = '738854288708599851'
 
 checkTime.setVNHours(6).setTimeCheckInterval(60000)
 
