@@ -41,7 +41,7 @@ var callTimes = 0
 var welcomedPeople = []
 const welcomeChannel = '770224161720631307'
 
-checkTime.setVNHours(7).setTimeCheckInterval(5000)
+checkTime.setVNHours(6).setTimeCheckInterval(60000)
 
 checkTime.on('rightTime', async () => {
     callTimes++
