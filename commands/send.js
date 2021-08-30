@@ -20,10 +20,9 @@ module.exports = {
                 if (get_emoji !== undefined) {
                     sentence[sentence.indexOf(word)] = get_emoji
                 }
-
             }
         }
-        await interaction.channel.send(`${interaction.user.username} wants to say: ${sentence.join(' ')}`)
+        await interaction.channel.send(`**${interaction.user.username}** wants to say: ${sentence.join(' ')}`)
         await interaction.reply({ content: `You've just sent: ${sentence.join(' ')}`, ephemeral: true })
     }
 }
