@@ -38,15 +38,15 @@ async function sendWelcome(_client, channelId, user) {
 }
 
 var callTimes = 0
-var welcomedPeople = []
-const welcomeChannel = '738854288708599851'
+var welcomed = false
+var welcomeChannel = '779015767772758056' // Default channel
 
 checkTime.setVNHours(6).setTimeCheckInterval(60000)
 
 checkTime.on('rightTime', async () => {
     callTimes++
     if (callTimes == 1) {
-        welcomedPeople = []
+        welcomed = false
         // TODO: check who already online at this time.
     }
 })
@@ -59,12 +59,22 @@ client.on('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
 
+    if (interaction.commandName == 'welcome') {
+        // Execute welcome command.
+        const channel = interaction.options.getChannel('set_channel')
+        welcomeChannel = channel.id.toString()
+        await interaction.reply('Welcome channel is now set to ' + channel)
+    }
+
     const command = client.commands.get(interaction.commandName)
 
     if (!command) return;
 
     try {
-        await command.execute(interaction)
+        if (interaction.commandName != 'welcome') {
+            // Execute other commands.
+            await command.execute(interaction)
+        }
     } catch (error) {
         console.error(error)
     }
@@ -72,7 +82,6 @@ client.on('interactionCreate', async interaction => {
 
 client.on('messageCreate', async message => {
     await console.log(`${message.author.tag}: ${message.content}`)
-    // TODO: Make some reply with some message
     if (message.author.id !== client.user.id) {
         // Call some function here
     }
@@ -82,9 +91,9 @@ client.on('presenceUpdate', async (oldPresence, newPresence) => {
     const presence = await newPresence
     if (presence.guild.id == process.env.RELEASE_GUILD_ID) {
         const user = await client.users.fetch(presence.userId)
-        if (!user.bot && !welcomedPeople.includes(user.id) && presence.status == 'online') {
+        if (!user.bot && !welcomed && presence.status == 'online' && welcomeChannel) {
             await sendWelcome(client, welcomeChannel, user)
-            welcomedPeople.push(user.id)
+            welcomed = true
         }
     }
 })
