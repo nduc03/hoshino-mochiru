@@ -63,7 +63,7 @@ client.on('interactionCreate', async interaction => {
         // Execute welcome command.
         const channel = interaction.options.getChannel('set_channel')
         welcomeChannel = channel.id.toString()
-        await interaction.reply('Welcome channel is now set to ' + channel)
+        await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
     }
 
     const command = client.commands.get(interaction.commandName)
