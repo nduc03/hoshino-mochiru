@@ -62,8 +62,13 @@ client.on('interactionCreate', async interaction => {
     if (interaction.commandName == 'welcome') {
         // Execute welcome command.
         const channel = interaction.options.getChannel('set_channel')
-        welcomeChannel = channel.id.toString()
-        await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
+        if (channel.isText()) {
+            welcomeChannel = channel.id.toString()
+            await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
+        }
+        else {
+            await interaction.reply({ content: 'Text channel is required.', ephemeral: true })
+        }
     }
 
     const command = client.commands.get(interaction.commandName)
