@@ -6,7 +6,7 @@ const redis = require("redis")
 
 require('dotenv').config()
 const checkTime = new TimeEmitter()
-const rdClient = redis.createClient({ port: process.env.REDIS_URL || 3000 })
+const rdClient = redis.createClient(process.env.REDIS_URL || 3000)
 
 rdClient.on('error', function (error) {
     console.error(error)
