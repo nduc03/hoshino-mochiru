@@ -1,12 +1,16 @@
-"use strict"
-
 const { Client, Collection, Intents } = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_PRESENCES] })
 const fs = require('fs')
-const { TimeEmitter } = require('./features/TimeCheck.js')
+const { TimeEmitter } = require('./features/TimeCheck')
+const redis = require("redis")
 
 require('dotenv').config()
 const checkTime = new TimeEmitter()
+const rdClient = redis.createClient({ port: process.env.REDIS_URL || 3000 })
+
+rdClient.on('error', function (error) {
+    console.error(error)
+})
 
 client.commands = new Collection();
 
@@ -40,20 +44,30 @@ async function sendWelcome(_client, channelId, user) {
 var callTimes = 0
 var welcomed = false
 var welcomeChannel = '779015767772758056' // Default channel
+var isDBStarted = false
 
+// Check current time is 6h in VN(GMT+7), the callback run every 60000 milliseconds
 checkTime.setVNHours(6).setTimeCheckInterval(60000)
 
 checkTime.on('rightTime', async () => {
     callTimes++
     if (callTimes == 1) {
         welcomed = false
-        // TODO: check who already online at this time.
     }
 })
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
-    checkTime.run()
+
+    checkTime.run() // Start checkTime callback
+    rdClient.get('channel', (err, reply) => {
+        if (err) { console.error(err) }
+
+        if (reply != null) {
+            welcomeChannel = reply // Retrieve channel id when bot start/restart
+        }
+        isDBStarted = true // Checking DB is started is necessary because of the asynchrony of the entire script
+    })
 })
 
 client.on('interactionCreate', async interaction => {
@@ -63,10 +77,13 @@ client.on('interactionCreate', async interaction => {
         // Execute welcome command.
         const channel = interaction.options.getChannel('set_channel')
         if (channel.isText()) {
+            // If user change welcome channel correctly
             welcomeChannel = channel.id.toString()
+            rdClient.set('channel', welcomeChannel) // Save channel id to Database
             await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
         }
         else {
+            // If user use command to voice channel and thread channel
             await interaction.reply({ content: 'Text channel is required.', ephemeral: true })
         }
     }
@@ -88,17 +105,25 @@ client.on('interactionCreate', async interaction => {
 client.on('messageCreate', async message => {
     await console.log(`${message.author.tag}: ${message.content}`)
     if (message.author.id !== client.user.id) {
-        // Call some function here
+        // Execute message interaction here.
     }
 })
 
 client.on('presenceUpdate', async (oldPresence, newPresence) => {
-    const presence = await newPresence
-    if (presence.guild.id == process.env.RELEASE_GUILD_ID) {
-        const user = await client.users.fetch(presence.userId)
-        if (!user.bot && !welcomed && presence.status == 'online' && welcomeChannel) {
-            await sendWelcome(client, welcomeChannel, user)
-            welcomed = true
+    if (isDBStarted) { // Only allow to run if database finish to start
+        const presence = await newPresence
+        if (presence.guild.id == process.env.RELEASE_GUILD_ID) {
+            const user = await client.users.fetch(presence.userId)
+            // if explain:
+            // condition "welcomeChannel": check welcomeChannel id is not undefined
+            // condition "!welcomed": check if any member is welcomed in that day
+            if (!user.bot && presence.status == 'online' && !welcomed && welcomeChannel) {
+                // Feature explain:
+                // Send welcome message for the first online member in "Sieben and Hydrocivik server" in that day
+                // The day restart at 6h (GMT+7) everyday
+                await sendWelcome(client, welcomeChannel, user)
+                welcomed = true
+            }
         }
     }
 })
