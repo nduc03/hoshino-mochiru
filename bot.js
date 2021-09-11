@@ -29,9 +29,9 @@ function choice(array) {
 
 async function sendWelcome(_client, channelId, user) {
     const welcome = [
-        'https://storage.googleapis.com/host-chan/wellcome/wc1.mp3',
-        'https://storage.googleapis.com/host-chan/wellcome/wc2.mp3',
-        'https://storage.googleapis.com/host-chan/wellcome/wc3.mp3',
+        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc1.mp3',
+        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc2.mp3',
+        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc3.mp3',
     ]
     const channel = await _client.channels.fetch(channelId)
     const hiMessage = [
