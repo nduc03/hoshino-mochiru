@@ -10,7 +10,7 @@ module.exports = {
                 .setRequired(true))
         .addBooleanOption(option =>
             option.setName('no_mention')
-            .setDescription('Send message anonymously.'))
+                .setDescription('Send message anonymously.'))
     , async execute(interaction) {
         const message = interaction.options.getString('message')
         const no_mention = interaction.options.getBoolean('no_mention')
@@ -29,6 +29,16 @@ module.exports = {
         var reply = sentence.join(' ')
         if (!no_mention) {
             reply = `**${interaction.user.username}** wants to say: ` + reply
+        }
+        else {
+            const role = await interaction.member.roles.cache
+            if (!role.has('846042793730375740')) {// check if the role is ì v í
+                await interaction.reply({
+                    content: 'No mention is only available for ì v í members, please contact server op to get this privilege <:ivi:868334824539185162>',
+                    ephemeral: true
+                })
+                return
+            }
         }
 
         await interaction.channel.send(reply)
