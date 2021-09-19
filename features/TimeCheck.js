@@ -6,6 +6,9 @@ class TimeEmitter extends EventEmitter {
     }
 
     setUTCHours(utcHours) {
+        if (utcHours > 24 && !Number.isInteger(utcHours)) {
+            throw new Error('Invalid time.')
+        }
         this.hours = utcHours
         return this
     }

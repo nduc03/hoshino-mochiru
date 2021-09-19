@@ -6,6 +6,7 @@ const redis = require("redis")
 
 require('dotenv').config()
 const checkTime = new TimeEmitter()
+const checkNight = new TimeEmitter()
 const rdClient = redis.createClient(process.env.REDIS_URL || 3000)
 
 rdClient.on('error', function (error) {
@@ -42,7 +43,11 @@ async function sendWelcome(_client, channelId, user) {
 }
 
 function watchingDonut(client) {
-    client.user.setPresence({ activities: [{ name: 'có donut không', type: 'WATCHING' }], status: 'online' })
+    client.user.setStatus('online')
+}
+
+function setStatusSleep(client) {
+    client.user.setStatus('idle')
 }
 
 var callTimes = 0
@@ -53,18 +58,32 @@ var isDBStarted = false
 // Check current time is 6h in VN(GMT+7), the callback run every 60000 milliseconds
 checkTime.setVNHours(6).setTimeCheckInterval(60000)
 
-checkTime.on('rightTime', async () => {
+checkNight.setVNHours(22).setTimeCheckInterval(60000 * 15) // callback run every 15 minutes
+
+checkTime.on('rightTime', () => {
     callTimes++
     if (callTimes == 1) {
         welcomed = false
     }
+    watchingDonut(client)
+})
+
+checkNight.on('rightTime', () => {
+    setStatusSleep(client)
 })
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
 
-    watchingDonut(client)
-    setInterval(watchingDonut, 60 * 60 * 1000, client) // 1 hour
+    const sleep_time = [23, 24, 25, 26, 27, 28, 29, 30] // 25 -> 30 is 1h -> 6h
+    const nowUTCHours = new Date(Date.now()).getUTCHours()
+    if (sleep_time.includes(nowUTCHours + 7)) {
+        setStatusSleep(client)
+    }
+    else {
+        watchingDonut(client)
+        setInterval(watchingDonut, 60 * 60 * 1000, client) // 1 hour
+    }
 
     checkTime.run() // Start checkTime callback
     rdClient.get('channel', (err, reply) => {
