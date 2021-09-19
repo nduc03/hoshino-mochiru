@@ -41,6 +41,10 @@ async function sendWelcome(_client, channelId, user) {
     channel.send({ content: choice(hiMessage), files: [choice(welcome)] })
 }
 
+function watchingDonut(client) {
+    client.user.setPresence({ activities: [{ name: 'có donut không', type: 'WATCHING' }], status: 'online' })
+}
+
 var callTimes = 0
 var welcomed = false
 var welcomeChannel = '779015767772758056' // Default channel
@@ -58,6 +62,9 @@ checkTime.on('rightTime', async () => {
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
+
+    watchingDonut(client)
+    setInterval(watchingDonut, 60 * 60 * 1000, client) // 1 hour
 
     checkTime.run() // Start checkTime callback
     rdClient.get('channel', (err, reply) => {
