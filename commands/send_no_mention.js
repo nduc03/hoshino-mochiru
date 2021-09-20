@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
+const { Permissions } = require('discord.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,10 +10,10 @@ module.exports = {
                 .setDescription('Enter your message here')
                 .setRequired(true)),
     async execute(interaction) {
-        const role = await interaction.member.roles.cache
-        if (!role.has('846042793730375740')) {// check if the role is ì v í
+        const permissions = await interaction.member.permissions
+        if (!permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             await interaction.reply({
-                content: 'No mention is only available for ì v í members, please contact server op to get this privilege <:ivi:868334824539185162>',
+                content: 'Sorry, this command is only available for administrators.',
                 ephemeral: true
             })
             return
