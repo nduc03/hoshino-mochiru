@@ -1,4 +1,4 @@
-const { Client, Collection, Intents } = require('discord.js')
+const { Client, Collection, Intents, Permissions } = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_PRESENCES] })
 const fs = require('fs')
 const { TimeEmitter } = require('./features/TimeCheck')
@@ -100,6 +100,13 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
 
     if (interaction.commandName == 'welcome') {
+        if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)){
+            await interaction.reply({
+                content: 'Sorry, only administrators can use this command.',
+                ephemeral: true
+            })
+            return
+        }
         // Execute welcome command.
         const channel = interaction.options.getChannel('set_channel')
         if (channel.isText()) {

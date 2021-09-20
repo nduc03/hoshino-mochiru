@@ -35,7 +35,7 @@ module.exports = {
             const permissions = await interaction.member.permissions
             if (!permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
                 await interaction.reply({
-                    content: 'Sorry, this command is only available for administrators.',
+                    content: 'Sorry, only administrators can use this command.',
                     ephemeral: true
                 })
                 return
