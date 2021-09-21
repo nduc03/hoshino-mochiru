@@ -25,7 +25,7 @@ module.exports = {
 
         const all_emojis = interaction.guild.emojis.cache
         const react_emoji_name = interaction.options.getString('emoji')
-        var id_option = this.parseID(interaction.options.getString('link_or_id'))
+        const id_option = this.parseID(interaction.options.getString('link_or_id'))
 
         const react_emoji = null || all_emojis.find(emoji => {
             return emoji.name == react_emoji_name
@@ -43,8 +43,14 @@ module.exports = {
             interaction.channel.messages.fetch({ limit: 1 }).then(messages => {
                 messages.first().react(react_emoji)
             }).catch(err => { console.error(err) })
+
+            await interaction.reply({
+                content: `Reaction added.`,
+                ephemeral: true
+            })
         }
         else if (Number.isInteger(parseInt(id_option))) {
+            // id reaction currently not working.
             interaction.channel.messages.react(id_option, react_emoji).catch(async () => {
                 await interaction.reply({
                     content: `Can't find the message you're looking for :(`,
@@ -60,11 +66,6 @@ module.exports = {
             })
             return
         }
-
-        await interaction.reply({
-            content: `Reaction added.`,
-            ephemeral: true
-        })
     },
     parseID(messageLinkOrId) {
         if (messageLinkOrId === null) {
