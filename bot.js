@@ -15,13 +15,18 @@ rdClient.on('error', function (error) {
 
 client.commands = new Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+
+const image = [
+    'https://cdn.discordapp.com/attachments/889538894905884734/890285237999898694/edited2.png',
+    'https://cdn.discordapp.com/attachments/889538894905884734/890287201110335598/edited.png'
+]
 
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = require(`./commands/${file}`)
     // set a new item in the Collection
     // with the key as the command name and the value as the exported module
-    client.commands.set(command.data.name, command);
+    client.commands.set(command.data.name, command)
 }
 
 function choice(array) {
@@ -112,7 +117,7 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply({ content: 'Text channel is required.', ephemeral: true })
         }
     }
-    
+
     // Find command object by command name
     const command = client.commands.get(interaction.commandName)
 
@@ -129,7 +134,15 @@ client.on('interactionCreate', async interaction => {
 })
 
 client.on('messageCreate', async message => {
-    const lastMessage = await message.content
+    if (message.author.id == 159985870458322944) { // Bot MEE6
+        if (message.content.includes('885036466504368128')) {// 885036466504368128 is golden ramsay
+            // Send inspiration message to @Golden Ramsay when he level up
+            message.channel.send('<:woahhh:885786490637000704> congratulation <@!885036466504368128>, you have leveled up 🎉!')
+            message.channel.send('<:Mochirubang:889737994318278697>')
+            message.channel.send({ files: [choice(image)] })
+        }
+    }
+    const lastMessage = message.content
     await console.log(`${message.author.tag}: ${message.content}`)
     if (message.author.id !== client.user.id) { // If message not from myself, execute the code
         if (lastMessage.startsWith('!info')) {
@@ -149,10 +162,10 @@ client.on('messageCreate', async message => {
             }
             if (mentionInfoList !== null) {
                 // then pick 1 random file from mention list
-                message.channel.send({ files: [choice(mentionInfoList)] })
+                await message.channel.send({ files: [choice(mentionInfoList)] })
             }
             else {
-                message.channel.send('Sorry, I don\'t know anything about this person 😥')
+                await message.channel.send('Sorry, I don\'t know anything about this person 😥')
             }
         }
 
