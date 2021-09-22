@@ -7,10 +7,7 @@ module.exports = {
         .addMentionableOption(option =>
             option.setName('who')
                 .setDescription('Show information about someone in this server.')
-                .setRequired(false))
-        .addStringOption(option => option.setName('assistant')
-            .setDescription('Show information about ì v í assistant.')
-            .setRequired(false)),
+                .setRequired(true)),
     members: {
         730442930317295667: [// nduc
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/nshit1.mp3',
@@ -57,11 +54,9 @@ module.exports = {
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/selfinfo4.mp3',
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/selfinfo5.mp3',
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/selfinfo6.mp3',
-            'https://cdn.discordapp.com/attachments/889538894905884734/889876772965994496/meow.mp3'
-        ],
-        846042793730375740: [// ì v í assistant
-            'https://host-chan.s3.ir-thr-at1.arvanstorage.com/%C3%AC%20v%20%C3%AD%201.mp3',
-            'https://host-chan.s3.ir-thr-at1.arvanstorage.com/%C3%AC%20v%20%C3%AD%202.mp3',
+            'https://cdn.discordapp.com/attachments/889538894905884734/889876772965994496/meow.mp3',
+            'https://cdn.discordapp.com/attachments/889538894905884734/890234446224179200/i_v_i_1.mp3',
+            'https://cdn.discordapp.com/attachments/889538894905884734/890234436615012362/i_v_i_2.mp3',
         ],
         885036466504368128: [// Golden Ramsay
             'https://cdn.discordapp.com/attachments/889538894905884734/889876472234377226/chef_1.mp3',
@@ -82,31 +77,19 @@ module.exports = {
         ]
     },
     async execute(interaction) {
-        const iviAssistant = interaction.options.getString('assistant')
-
         const mention = interaction.options.getMentionable('who')
 
-        if (iviAssistant == null && mention == null) {
-            await interaction.reply('info help placeholder')
+        var mentionId = parseInt(mention.id)
+        if (mentionId === 702063196420177981 || mentionId === 832626547357122562) {
+            // changing nduc clone id to nduc main id.
+            mentionId = 730442930317295667
         }
-
-        else if (iviAssistant != null) {
-            await interaction.reply({ files: [choice(this.members[846042793730375740])] })
+        if (!Object.keys(this.members).includes(mentionId.toString())) {
+            await interaction.reply('Sorry, I don\'t know anything about this person 😥')
+            return
         }
-
-        else if (mention != null) {
-            var mentionId = parseInt(mention.id)
-            if (mentionId === 702063196420177981 || mentionId === 832626547357122562) {
-                // changing nduc clone id to nduc main id.
-                mentionId = 730442930317295667
-            }
-            if (!Object.keys(this.members).includes(mentionId.toString())) {
-                await interaction.reply('Sorry, I don\'t know anything about this person 😥')
-                return
-            }
-            const userFiles = this.members[mentionId]
-            await interaction.reply({ files: [choice(userFiles)] })
-        }
+        const userFiles = this.members[mentionId]
+        await interaction.reply({ files: [choice(userFiles)] })
     }
 }
 
