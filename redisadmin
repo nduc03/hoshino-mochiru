@@ -1,0 +1,26 @@
+const args = process.argv.slice(2)
+const redis = require('redis')
+
+const rdPort = process.env.REDIS_URL || 3000
+const rdClient = redis.createClient(rdPort)
+
+
+if (args[0] === 'del') {
+    const key = args[1]
+    rdClient.get(key, (err, rep) => {
+        if (err) { console.log(err) }
+        if (rep !== null) {
+            rdClient.del(key, (err) => {
+                if (err) { console.log(err) }
+                else {
+                    console.log('Key: ' + key + ' deleted.')
+                    process.exit(0)
+                }
+            })
+        }
+        else {
+            console.log('Error: Key ' + key + ' not found.')
+            process.exit(0)
+        }
+    })
+}

@@ -26,7 +26,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
             commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.RELEASE_GUILD_ID)
         }
         else if (process.argv[2] === 'test' || process.argv[2] === undefined) {
-            commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.DEV_GUILD_ID)
+            commandRoutes = Routes.applicationGuildCommands(process.env.DEV_CLIENT_ID, process.env.DEV_GUILD_ID)
         }
 
         if (process.argv[3] === 'delete') {

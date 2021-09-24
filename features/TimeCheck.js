@@ -3,6 +3,7 @@ const EventEmitter = require('events')
 class UTCHoursEmitter extends EventEmitter {
     constructor() {
         super()
+        this.intervalMs = 60000 // Default interval check is 1 minute (60000 milliseconds)
     }
 
     setTimeCheckInterval(intervalMs) {

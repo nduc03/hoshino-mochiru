@@ -1,5 +1,5 @@
 const { Client, Collection, Intents, Permissions } = require('discord.js')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_PRESENCES] })
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] })
 const fs = require('fs')
 const { UTCHoursEmitter } = require('./features/TimeCheck')
 const redis = require("redis")
@@ -16,6 +16,8 @@ rdClient.on('error', function (error) {
 client.commands = new Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+
+var welcomeChannel = '770224161720631307' // Default welcome channel
 
 const image = [
     'https://cdn.discordapp.com/attachments/889538894905884734/890285237999898694/edited2.png',
@@ -36,33 +38,21 @@ function choice(array) {
 
 async function sendWelcome(_client, channelId, user) {
     const welcome = [
+        // TODO: Need to download then rename those to welcome then upload to info pack
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc1.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc2.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc3.mp3',
     ]
     const channel = await _client.channels.fetch(channelId)
     const hiMessage = [
-        `Hi ${user}, have a good day.`,
-        `Nice to meet you, ${user}`
+        `Hi ${user}, welcome to our server. We hope you can stay with us for a long time.`,
+        `Nice to see you here, ${user}. We hope you can stay with us for a long time.`
     ]
     channel.send({ content: choice(hiMessage), files: [choice(welcome)] })
 }
 
-var callTimes = 0
-var welcomed = false
-var welcomeChannel = '779015767772758056' // Default channel
-var isDBStarted = false
-var checkedWelcomed = false
-
-// Check current time every 60000 milliseconds (1 minute)
-checkTime.setTimeCheckInterval(60000)
 
 checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
-    callTimes++
-    if (callTimes == 1) {
-        welcomed = false
-        rdClient.set('welcomed', false)
-    }
     client.user.setStatus('online')
 })
 
@@ -72,23 +62,17 @@ checkTime.on('17h', () => { // 16h UTC is 0h in VN(GMT+7)
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
-
-    checkTime.run() // Start checkTime callback
-    rdClient.get('channel', (err, reply) => {
+    // Check current time every 60000 milliseconds (1 minute)
+    checkTime.setTimeCheckInterval(60000).run() // Start checkTime callback
+    rdClient.get('welcome', (err, reply) => {
         if (err) { console.error(err) }
 
         if (reply != null) {
             welcomeChannel = reply // Retrieve channel id when bot start/restart
         }
-        isDBStarted = true // Checking DB is started is necessary because of the asynchrony of the entire script
-    })
-    rdClient.get('welcomed', (err, reply) => {
-        if (err) { console.error(err) }
-
-        if (reply != null) {
-            welcomed = reply
+        else {
+            rdClient.set('welcome', welcomeChannel)
         }
-        checkedWelcomed = true
     })
 })
 
@@ -171,25 +155,9 @@ client.on('messageCreate', async message => {
     }
 })
 
-client.on('presenceUpdate', async (oldPresence, newPresence) => {
-    if (isDBStarted) { // Only allow to run if database finish to start
-        const presence = await newPresence
-        if (presence.guild.id == process.env.RELEASE_GUILD_ID) {
-            const user = await client.users.fetch(presence.userId)
-            // if explain:
-            // condition "welcomeChannel": check welcomeChannel id is not undefined
-            // condition "!welcomed": check if any member is welcomed in that day
-            // condition "checkedWelcomed": check if variable "welcomed" is retrieved by Database or not
-            if (!user.bot && presence.status == 'online' && !welcomed && welcomeChannel && checkedWelcomed) {
-                // Feature explain:
-                // Send welcome message for the first online member in "Sieben and Hydrocivik server" in that day
-                // The day restart at 6h (GMT+7) everyday
-                await sendWelcome(client, welcomeChannel, user)
-                welcomed = true
-                rdClient.set('welcomed', true)
-            }
-        }
-    }
+client.on('guildMemberAdd', member => {
+    // Send a greeting to the new guild member
+    sendWelcome(client, welcomeChannel, member)
 })
 
 client.login(process.env.TOKEN)
