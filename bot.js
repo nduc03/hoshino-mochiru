@@ -66,7 +66,7 @@ checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
     client.user.setStatus('online')
 })
 
-checkTime.on('16h', () => { // 16h UTC is 23h in VN(GMT+7)
+checkTime.on('17h', () => { // 16h UTC is 0h in VN(GMT+7)
     client.user.setStatus('idle')
 })
 

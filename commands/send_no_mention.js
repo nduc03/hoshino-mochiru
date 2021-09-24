@@ -4,7 +4,7 @@ const { Permissions } = require('discord.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('send_nm')
-        .setDescription('Still /send but no mention')
+        .setDescription('Still /send but no mention (admin only)')
         .addStringOption(option =>
             option.setName('message')
                 .setDescription('Enter your message here')

@@ -51,7 +51,12 @@ module.exports = {
         }
         else if (Number.isInteger(parseInt(id_option))) {
             // id reaction currently not working.
-            interaction.channel.messages.react(id_option, react_emoji).catch(async () => {
+            interaction.channel.messages.react(id_option, react_emoji).then(async () => {
+                await interaction.reply({
+                    content: `Reaction added.`,
+                    ephemeral: true
+                })
+            }).catch(async () => {
                 await interaction.reply({
                     content: `Can't find the message you're looking for :(`,
                     ephemeral: true
