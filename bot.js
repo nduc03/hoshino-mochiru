@@ -137,8 +137,7 @@ client.on('messageCreate', async message => {
     if (message.author.id == 159985870458322944) { // Bot MEE6
         if (message.content.includes('885036466504368128')) {// 885036466504368128 is golden ramsay
             // Send inspiration message to @Golden Ramsay when he level up
-            message.channel.send('<:woahhh:885786490637000704> congratulation <@!885036466504368128>, you have leveled up 🎉!')
-            message.channel.send('<:Mochirubang:889737994318278697>')
+            message.channel.send('<:woahhh:885786490637000704> you did very well, <@!885036466504368128>. Congratulations 🎉!')
             message.channel.send({ files: [choice(image)] })
         }
     }
