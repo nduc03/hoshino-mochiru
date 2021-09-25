@@ -13,6 +13,7 @@ const parseMessageCommand = require('./features/parseMessageCommand')
 require('dotenv').config()
 const checkTime = new UTCHoursEmitter()
 const rdClient = redis.createClient(process.env.REDIS_URL || 3000)
+const token = process.env.DEBUG ? process.env.DEV_TOKEN : process.env.PRODUCT_TOKEN
 
 // Import all commands
 client.commands = new Collection();
@@ -147,4 +148,4 @@ client.on('guildMemberAdd', member => {
     sendWelcome(client, welcomeChannel, member)
 })
 
-client.login(process.env.TOKEN)
+client.login(token)

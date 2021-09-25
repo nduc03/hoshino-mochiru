@@ -12,7 +12,7 @@ for (const file of commandFiles) {
     commands.push(command.data.toJSON());
 }
 
-var rest = rest = new REST({ version: '9' }).setToken(process.env.PRODUCT_TOKEN)
+const rest = new REST({ version: '9' })
 
     ; (async () => {
         try {
@@ -20,13 +20,15 @@ var rest = rest = new REST({ version: '9' }).setToken(process.env.PRODUCT_TOKEN)
 
             var commandRoutes = null
             if (process.argv[2] === 'release') {
+                rest.setToken(process.env.PRODUCT_TOKEN)
                 commandRoutes = Routes.applicationCommands(process.env.CLIENT_ID)
             }
             else if (process.argv[2] === 'fast-release') {
+                rest.setToken(process.env.PRODUCT_TOKEN)
                 commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.RELEASE_GUILD_ID)
             }
             else if (process.argv[2] === 'test' || process.argv[2] === undefined) {
-                rest = new REST({ version: '9' }).setToken(process.env.TOKEN)
+                rest.setToken(process.env.DEV_TOKEN)
                 commandRoutes = Routes.applicationGuildCommands(process.env.DEV_CLIENT_ID, process.env.DEV_GUILD_ID)
             }
 
