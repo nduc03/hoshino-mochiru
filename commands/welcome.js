@@ -5,7 +5,7 @@ module.exports = {
         .setName('welcome')
         .setDescription('Change the welcome channel.')
         .addChannelOption(option =>
-            option.setName('set_channel')
+            option.setName('channel')
                 .setDescription('Enter channel name here.')
                 .setRequired(true)
         )

@@ -1,21 +1,29 @@
 const { Client, Collection, Intents, Permissions } = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] })
 const fs = require('fs')
-const { UTCHoursEmitter } = require('./features/TimeCheck')
 const redis = require("redis")
-const parseInfo = require('./features/info')
+
+const { UTCHoursEmitter } = require('./features/TimeCheck')
+const getInfo = require('./features/getInfo')
+const sendWelcome = require('./features/sendWelcome')
+const choice = require('./features/choice')
+const parseMessageCommand = require('./features/parseMessageCommand')
+
 
 require('dotenv').config()
 const checkTime = new UTCHoursEmitter()
 const rdClient = redis.createClient(process.env.REDIS_URL || 3000)
 
-rdClient.on('error', function (error) {
-    console.error(error)
-})
-
+// Import all commands
 client.commands = new Collection();
-
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+fs.readdirSync('./commands')
+    .filter(file => file.endsWith('.js'))
+    .forEach(file => {
+        const command = require(`./commands/${file}`)
+        // set a new item in the Collection
+        // with the key as the command name and the value as the exported module
+        client.commands.set(command.data.name, command)
+    })
 
 var welcomeChannel = '770224161720631307' // Default welcome channel
 
@@ -24,32 +32,9 @@ const image = [
     'https://cdn.discordapp.com/attachments/889538894905884734/890287201110335598/edited.png'
 ]
 
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`)
-    // set a new item in the Collection
-    // with the key as the command name and the value as the exported module
-    client.commands.set(command.data.name, command)
-}
-
-function choice(array) {
-    // pick a element from the array
-    return array[Math.floor(Math.random() * array.length)]
-}
-
-async function sendWelcome(_client, channelId, user) {
-    const welcome = [
-        // TODO: Need to download then rename those to welcome then upload to info pack
-        'https://cdn.discordapp.com/attachments/889538894905884734/891235295675166750/welcome.mp3',
-        'https://cdn.discordapp.com/attachments/889538894905884734/891235472460881950/welcome.mp3',
-        'https://cdn.discordapp.com/attachments/889538894905884734/891235581030457344/welcome.mp3',
-    ]
-    const channel = await _client.channels.fetch(channelId)
-    const hiMessage = [
-        `Hi ${user}, welcome to our server. We hope you can stay with us for a long time.`,
-        `Nice to see you here, ${user}. We hope you can stay with us for a long time.`
-    ]
-    channel.send({ content: choice(hiMessage), files: [choice(welcome)] })
-}
+rdClient.on('error', function (error) {
+    console.error(error)
+})
 
 
 checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
@@ -59,6 +44,7 @@ checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
 checkTime.on('17h', () => { // 16h UTC is 0h in VN(GMT+7)
     client.user.setStatus('idle')
 })
+
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
@@ -89,7 +75,11 @@ client.on('interactionCreate', async interaction => {
             return
         }
         // Execute welcome command.
-        const channel = interaction.options.getChannel('set_channel')
+        const channel = interaction.options.getChannel('channel')
+        if (channel === null) {
+            console.warn('Cannot get welcome channel.')
+            return
+        }
         if (channel.isText()) {
             // If user change welcome channel correctly
             welcomeChannel = channel.id.toString()
@@ -129,13 +119,11 @@ client.on('messageCreate', async message => {
     await console.log(`${message.author.tag}: ${message.content}`)
     if (message.author.id !== client.user.id) { // If message not from myself, execute the code
         if (lastMessage.startsWith('!info')) {
-            // if command is !info, split it into list of word
-            // then filter the blank words (filter when user intentionally add more space unnecessarily)
-            // (filter example: "  !info   @user   " -split-> ['','','!info','','','@user','',''] -filter-> ['!info','@user'])
+            // if command is !info, parse this command to list using parseMessageCommand
             // then get the second value of the array
             // then use parseInfo() to get the info list
             // then save it to mentionInfoList
-            const mentionInfoList = parseInfo(lastMessage.split(' ').filter(args => args !== '')[1])
+            const mentionInfoList = getInfo(parseMessageCommand(lastMessage)[1])
             // undefined when only have command without arguments, eg: "!info   "
             // null when command has arguments but incorrect arguments or info can't be found,
             // eg: "!info @not_exist_user", or "!info wrong_argument"

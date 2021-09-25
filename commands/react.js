@@ -25,7 +25,7 @@ module.exports = {
 
         const all_emojis = interaction.guild.emojis.cache
         const react_emoji_name = interaction.options.getString('emoji')
-        const id_option = this.parseID(interaction.options.getString('link_or_id'))
+        const id_option = parseID(interaction.options.getString('link_or_id'))
 
         const react_emoji = null || all_emojis.find(emoji => {
             return emoji.name == react_emoji_name
@@ -71,20 +71,20 @@ module.exports = {
             })
             return
         }
-    },
-    parseID(messageLinkOrId) {
-        if (messageLinkOrId === null) {
-            return null
-        }
-        else if (Number.isInteger(parseInt(messageLinkOrId))) {
-            return parseInt(messageLinkOrId)
-        }
-        else if (messageLinkOrId.includes('https://discord.com/channels')) {
-            const link_parts = messageLinkOrId.split('/')
-            return link_parts[link_parts.length - 1]
-        }
-        else {
-            return messageLinkOrId
-        }
+    }
+}
+function parseID(messageLinkOrId) {
+    if (messageLinkOrId === null) {
+        return null
+    }
+    else if (Number.isInteger(parseInt(messageLinkOrId))) {
+        return messageLinkOrId
+    }
+    else if (messageLinkOrId.includes('https://discord.com/channels')) {
+        const link_parts = messageLinkOrId.split('/')
+        return link_parts[link_parts.length - 1]
+    }
+    else {
+        return messageLinkOrId
     }
 }

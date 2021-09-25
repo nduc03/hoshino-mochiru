@@ -1,4 +1,4 @@
 Time check event:
- - Method: setUTCHours(), setVNHours(), setTimeCheckInterval(), run()
- - ```'rightTime'``` trigger at set UTC time
+ - Method: setTimeCheckInterval(), run()
+ - Event emits with format ```'<UTC_Hours>h'```
  - Documents still being written.
