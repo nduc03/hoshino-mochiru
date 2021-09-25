@@ -39,9 +39,9 @@ function choice(array) {
 async function sendWelcome(_client, channelId, user) {
     const welcome = [
         // TODO: Need to download then rename those to welcome then upload to info pack
-        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc1.mp3',
-        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc2.mp3',
-        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/wc3.mp3',
+        'https://cdn.discordapp.com/attachments/889538894905884734/891235295675166750/welcome.mp3',
+        'https://cdn.discordapp.com/attachments/889538894905884734/891235472460881950/welcome.mp3',
+        'https://cdn.discordapp.com/attachments/889538894905884734/891235581030457344/welcome.mp3',
     ]
     const channel = await _client.channels.fetch(channelId)
     const hiMessage = [
@@ -136,7 +136,6 @@ client.on('messageCreate', async message => {
             // then use parseInfo() to get the info list
             // then save it to mentionInfoList
             const mentionInfoList = parseInfo(lastMessage.split(' ').filter(args => args !== '')[1])
-
             // undefined when only have command without arguments, eg: "!info   "
             // null when command has arguments but incorrect arguments or info can't be found,
             // eg: "!info @not_exist_user", or "!info wrong_argument"
