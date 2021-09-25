@@ -83,12 +83,12 @@ module.exports = {
     async execute(interaction) {
         const mention = interaction.options.getMentionable('who')
 
-        var mentionId = parseInt(mention.id)
-        if (mentionId === 702063196420177981 || mentionId === 832626547357122562) {
+        var mentionId = mention.id
+        if (mentionId == "702063196420177981" || mentionId == "832626547357122562") {
             // changing nduc clone id to nduc main id.
-            mentionId = 730442930317295667
+            mentionId = "730442930317295667"
         }
-        if (!Object.keys(this.members).includes(mentionId.toString())) {
+        if (!Object.keys(this.members).includes(mentionId)) {
             await interaction.reply('Sorry, I don\'t know anything about this person 😥')
             return
         }
