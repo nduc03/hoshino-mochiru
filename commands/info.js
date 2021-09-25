@@ -20,7 +20,7 @@ module.exports = {
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/nshit8.mp3',
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/nshit9.mp3',
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/nshit10.mp3',
-            'https://host-chan.s3.ir-thr-at1.arvanstorage.com/nshit11.mp3',
+            'https://cdn.discordapp.com/attachments/889538894905884734/891251310014398484/nshit11.mp3',
             'https://host-chan.s3.ir-thr-at1.arvanstorage.com/nshit12.mp3',
         ],
         603506144069156885: [// hydro
@@ -105,5 +105,3 @@ function choice(array) {
 // nduc nick 2: 702063196420177981
 // nick clone: 832626547357122562
 // ì v í (role): 846042793730375740
-
-// nduc: 'https://storage.googleapis.com/host-chan/nduc/nshitbonk.mp3' // easter egg coming soon on next release
