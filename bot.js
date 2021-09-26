@@ -109,22 +109,34 @@ client.on('interactionCreate', async interaction => {
 })
 
 client.on('messageCreate', async message => {
+    console.log(`${message.author.tag}: ${message.content}`)
+
     if (message.author.id == 159985870458322944) { // Bot MEE6
-        if (message.content.includes('885036466504368128')) {// 885036466504368128 is golden ramsay
-            // Send inspiration message to @Golden Ramsay when he level up
-            message.channel.send('<:woahhh:885786490637000704> you did very well, <@!885036466504368128>. Congratulations 🎉!')
-            message.channel.send({ files: [choice(image)] })
+        const simpMembers = (await message.guild.roles.fetch('888429562801844225')).members
+        if (simpMembers != null) {
+            simpMembers.forEach(member => {
+                if (message.content.includes(member.id)) {
+                    // Send inspiration message to @simp when they level up
+                    message.channel.send(`<:woahhh:885786490637000704> you did very well, **${member.nickname}**. Congratulations 🎉!`)
+                    message.channel.send({ files: [choice(image)] })
+                }
+            })
+        }
+        else {
+            console.warn('Fetch simpMembers = null')
         }
     }
-    const lastMessage = message.content
-    await console.log(`${message.author.tag}: ${message.content}`)
-    if (message.author.id !== client.user.id) { // If message not from myself, execute the code
-        if (lastMessage.startsWith('!info')) {
+
+    const lastRecentMessage = message.content
+
+    // If message not from myself, execute the code
+    if (message.author.id !== client.user.id) {
+        if (lastRecentMessage.startsWith('!info')) {
             // if command is !info, parse this command to list using parseMessageCommand
             // then get the second value of the array
             // then use parseInfo() to get the info list
             // then save it to mentionInfoList
-            const mentionInfoList = getInfo(parseMessageCommand(lastMessage)[1])
+            const mentionInfoList = getInfo(parseMessageCommand(lastRecentMessage)[1])
             // undefined when only have command without arguments, eg: "!info   "
             // null when command has arguments but incorrect arguments or info can't be found,
             // eg: "!info @not_exist_user", or "!info wrong_argument"
