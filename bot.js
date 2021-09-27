@@ -117,7 +117,7 @@ client.on('messageCreate', async message => {
             simpMembers.forEach(member => {
                 if (message.content.includes(member.id)) {
                     // Send inspiration message to @simp when they level up
-                    message.channel.send(`<:woahhh:885786490637000704> you did very well, **${member.nickname}**. Congratulations 🎉!`)
+                    message.channel.send(`<:woahhh:885786490637000704> you did very well, ${member}. Congratulations 🎉!`)
                     message.channel.send({ files: [choice(image)] })
                 }
             })
