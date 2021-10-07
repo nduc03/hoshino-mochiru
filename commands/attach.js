@@ -4,7 +4,7 @@ const { Permissions } = require('discord.js')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('attach')
-        .setDescription('Send file (beta) - currently this feature only work with cdn.discordapp.com')
+        .setDescription('Send file - this feature only works with cdn.discordapp.com')
         .addStringOption(option =>
             option.setName('link')
                 .setDescription('https://cdn.discordapp.com link')

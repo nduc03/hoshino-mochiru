@@ -31,10 +31,10 @@ const members = {
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama3.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama4.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama5.mp3',
-        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama6.mp3',
+        'https://cdn.discordapp.com/attachments/889538894905884734/895513157563473931/mama6.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama7.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama8.mp3',
-        'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama9.mp3',
+        'https://cdn.discordapp.com/attachments/889538894905884734/895513181076725770/mama9.mp3',
         'https://host-chan.s3.ir-thr-at1.arvanstorage.com/mama10.mp3',
     ],
     '875546521460957255': [// self
