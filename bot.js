@@ -42,7 +42,7 @@ checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
     client.user.setStatus('online')
 })
 
-checkTime.on('17h', () => { // 16h UTC is 0h in VN(GMT+7)
+checkTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
     client.user.setStatus('idle')
 })
 
@@ -79,6 +79,10 @@ client.on('interactionCreate', async interaction => {
         const channel = interaction.options.getChannel('channel')
         if (channel === null) {
             console.warn('Cannot get welcome channel.')
+            await interaction.reply({
+                content: 'Sorry, an unexpected error occured, please try again 😥',
+                ephemeral: true
+            }) 
             return
         }
         if (channel.isText()) {
@@ -88,7 +92,7 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
         }
         else {
-            // If user use command to voice channel and thread channel
+            // If user use command to voice channel or thread channel
             await interaction.reply({ content: 'Text channel is required.', ephemeral: true })
         }
     }
@@ -109,14 +113,12 @@ client.on('interactionCreate', async interaction => {
 })
 
 client.on('messageCreate', async message => {
-    console.log(`${message.author.tag}: ${message.content}`)
-
-    if (message.author.id == 159985870458322944) { // Bot MEE6
+    if (message.author.id == 159985870458322944) { // 159985870458322944 is Bot MEE6
         const simpMembers = (await message.guild.roles.fetch('888429562801844225')).members
         if (simpMembers != null) {
             simpMembers.forEach(member => {
                 if (message.content.includes(member.id)) {
-                    // Send inspiration message to @simp when they level up
+                    // Send inspiration message to @simp role when they level up
                     message.channel.send(`<:woahhh:885786490637000704> you did very well, ${member}. Congratulations 🎉!`)
                     message.channel.send({ files: [choice(image)] })
                 }
@@ -125,12 +127,12 @@ client.on('messageCreate', async message => {
         else {
             console.warn('Fetch simpMembers = null')
         }
+        return
     }
-
-    const lastRecentMessage = message.content
 
     // If message not from myself, execute the code
     if (message.author.id !== client.user.id) {
+        const lastRecentMessage = message.content
         if (lastRecentMessage.startsWith('!info')) {
             // if command is !info, parse this command to list using parseMessageCommand
             // then get the second value of the array
@@ -151,7 +153,6 @@ client.on('messageCreate', async message => {
                 await message.channel.send('Sorry, I don\'t know anything about this person 😥')
             }
         }
-
     }
 })
 
