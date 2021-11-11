@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const choice = require('../features/choice')
-const members_info = require('../info/ivi_members')
+const members_info = require('../links/ivi_members_info')
 
 module.exports = {
     data: new SlashCommandBuilder()

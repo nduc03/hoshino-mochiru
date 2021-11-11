@@ -8,6 +8,7 @@ const getInfo = require('./features/getInfo')
 const sendWelcome = require('./features/sendWelcome')
 const choice = require('./features/choice')
 const parseMessageCommand = require('./features/parseMessageCommand')
+const images = require('./links/congratulation_images')
 
 
 require('dotenv').config()
@@ -27,12 +28,7 @@ fs.readdirSync('./commands')
     })
 
 // Default welcome channel (it will be set if DB is initialized first time or DB is unavailable)
-var welcomeChannel = '770224161720631307'
-
-const image = [
-    'https://cdn.discordapp.com/attachments/889538894905884734/890285237999898694/edited2.png',
-    'https://cdn.discordapp.com/attachments/889538894905884734/890287201110335598/edited.png'
-]
+let welcomeChannel = '770224161720631307'
 
 rdClient.on('error', function (error) {
     console.error(error)
@@ -52,14 +48,14 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
     // Check current time every 60000 milliseconds (1 minute)
     checkTime.setTimeCheckInterval(60000).run() // Start checkTime callback
-    rdClient.get('welcome', (err, reply) => {
+    rdClient.get('welcomeChannel', (err, reply) => {
         if (err) { console.error(err) }
 
         if (reply != null) {
             welcomeChannel = reply // Retrieve channel id when bot start/restart
         }
         else {
-            rdClient.set('welcome', welcomeChannel)
+            rdClient.set('welcomeChannel', welcomeChannel)
         }
     })
 })
@@ -69,7 +65,7 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.commandName == 'welcome') {
         // Check if the user has permission: ADMINISTRATOR
-        if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+        if (typeof interaction.member.permissions !== 'string' && !interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             await interaction.reply({
                 content: 'Sorry, only administrators can use this command.',
                 ephemeral: true
@@ -83,13 +79,13 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply({
                 content: 'Sorry, an unexpected error occured, please try again 😥',
                 ephemeral: true
-            }) 
+            })
             return
         }
         if (channel.isText()) {
             // If user change welcome channel correctly
             welcomeChannel = channel.id.toString()
-            rdClient.set('channel', welcomeChannel) // Save channel id to Database
+            rdClient.set('welcomeChannel', welcomeChannel) // Save channel id to Database
             await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
         }
         else {
@@ -121,7 +117,7 @@ client.on('messageCreate', async message => {
                 if (message.content.includes(member.id)) {
                     // Send inspiration message to @simp role when they level up
                     message.channel.send(`<:woahhh:885786490637000704> you did very well, ${member}. Congratulations 🎉!`)
-                    message.channel.send({ files: [choice(image)] })
+                    message.channel.send({ files: [choice(images)] })
                 }
             })
         }

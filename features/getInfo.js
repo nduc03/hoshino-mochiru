@@ -1,4 +1,4 @@
-const members = require('../info/ivi_members')
+const members = require('../links/ivi_members_info')
 
 function getInfo(who) {
     var userId = null

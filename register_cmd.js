@@ -19,24 +19,31 @@ const rest = new REST({ version: '9' })
             console.log('Started refreshing application (/) commands.')
 
             var commandRoutes = null
+
+            // Release mode: release, fast-release, test, special
             if (process.argv[2] === 'release') {
+                // Release commands to bot (can use commands in all servers)
                 rest.setToken(process.env.PRODUCT_TOKEN)
                 commandRoutes = Routes.applicationCommands(process.env.CLIENT_ID)
             }
             else if (process.argv[2] === 'fast-release') {
+                // Release commands to release server
                 rest.setToken(process.env.PRODUCT_TOKEN)
                 commandRoutes = Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.RELEASE_GUILD_ID)
             }
             else if (process.argv[2] === 'test' || process.argv[2] === undefined) {
+                // Release commands to test server and test bot
                 rest.setToken(process.env.DEV_TOKEN)
                 commandRoutes = Routes.applicationGuildCommands(process.env.DEV_CLIENT_ID, process.env.DEV_GUILD_ID)
             }
             else if (process.argv[2] === 'special') {
+                // Release commands to release server and test bot
                 rest.setToken(process.env.DEV_TOKEN)
                 commandRoutes = Routes.applicationGuildCommands(process.env.DEV_CLIENT_ID, process.env.RELEASE_GUILD_ID)
             }
 
-            if (process.argv[3] === 'delete') {
+            if (process.argv.includes('--del')) {
+                // Delete all commands in selected release mode
                 commands = []
             }
 
