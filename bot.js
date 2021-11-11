@@ -16,7 +16,7 @@ const rdClient = redis.createClient(process.env.REDIS_URL || 3000)
 const token = (process.env.DEBUG == 'true') ? process.env.DEV_TOKEN : process.env.PRODUCT_TOKEN
 
 // Import all commands
-client.commands = new Collection();
+client.commands = new Collection()
 fs.readdirSync('./commands')
     .filter(file => file.endsWith('.js'))
     .forEach(file => {
@@ -26,7 +26,8 @@ fs.readdirSync('./commands')
         client.commands.set(command.data.name, command)
     })
 
-var welcomeChannel = '770224161720631307' // Default welcome channel
+// Default welcome channel (it will be set if DB is initialized first time or DB is unavailable)
+var welcomeChannel = '770224161720631307'
 
 const image = [
     'https://cdn.discordapp.com/attachments/889538894905884734/890285237999898694/edited2.png',
