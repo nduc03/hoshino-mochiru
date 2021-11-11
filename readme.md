@@ -6,7 +6,8 @@ The bot is currently stopped developing.
 ## Installation prerequisite
 
 Node.js 16.6.0 or newer is required.  
-Redis database is recommended for the bot to work properly.  
+Redis database is recommended for the bot to work properly.
+Create .env file with correct configuration from template.env is required for the bot to work properly.  
 All the npm package is listed in ```package.json```, just use ```npm install``` to install all the dependencies.  
 
 ### How to register commands
@@ -38,7 +39,7 @@ const { UTCHoursEmitter } = require('../features/TimeCheck')
 
 Event name format: ```<Current_UTC_Hours>h```  
 Callback: no argument.
-  
+
 Example:
 
 ```js
