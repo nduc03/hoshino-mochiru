@@ -5,10 +5,10 @@ The bot is currently stopped developing.
 
 ## Installation prerequisite
 
-Node.js 16.6.0 or newer is required.  
+Node.js 16.6.0 or newer is **required**.  
 Redis database is recommended for the bot to work properly.
 Create .env file with correct configuration from template.env is required for the bot to work properly.  
-All the npm package is listed in ```package.json```, just use ```npm install``` to install all the dependencies.  
+All the necessary npm packages is listed in ```package.json```, just use ```npm install``` to install all the dependencies.  
 
 ### How to run the bot
 
