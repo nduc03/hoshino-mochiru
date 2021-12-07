@@ -10,6 +10,10 @@ Redis database is recommended for the bot to work properly.
 Create .env file with correct configuration from template.env is required for the bot to work properly.  
 All the npm package is listed in ```package.json```, just use ```npm install``` to install all the dependencies.  
 
+### How to run the bot
+
+Command: ```node bot.js```
+
 ### How to register commands
 
 Command: ```node register_cmd.js [release-mode] [optional-args]```

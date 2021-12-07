@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const choice = require('../features/choice')
 const members_info = require('../links/ivi_members_info')
+const Constants = require('../constants')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,9 +16,9 @@ module.exports = {
         const mention = interaction.options.getMentionable('who')
 
         var mentionId = mention.id
-        if (mentionId == "702063196420177981" || mentionId == "832626547357122562") {
+        if (mentionId == Constants.NDUC_CLONE_1_ID || mentionId == Constants.NDUC_CLONE_2_ID) {
             // changing nduc clone id to nduc main id.
-            mentionId = "730442930317295667"
+            mentionId = Constants.NDUC_MAIN_ID
         }
         if (!Object.keys(this.members).includes(mentionId)) {
             await interaction.reply('Sorry, I don\'t know anything about this person 😥')

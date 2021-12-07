@@ -9,6 +9,7 @@ const sendWelcome = require('./features/sendWelcome')
 const choice = require('./features/choice')
 const parseMessageCommand = require('./features/parseMessageCommand')
 const images = require('./links/congratulation_images')
+const Constants = require('./constants')
 
 
 require('dotenv').config()
@@ -28,7 +29,7 @@ fs.readdirSync('./commands')
     })
 
 // Default welcome channel (it will be set if DB is initialized first time or DB is unavailable)
-let welcomeChannel = '770224161720631307'
+let welcomeChannel = Constants.WELCOME_CHANNEL_ID
 
 rdClient.on('error', function (error) {
     console.error(error)
@@ -41,6 +42,14 @@ checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
 
 checkTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
     client.user.setStatus('idle')
+    client.guilds.fetch(Constants.SIEBEN_AND_HYDROCIVIK_SERVER_ID) // Sieben and Hydrocivik server
+        .then(async guild => {
+            const role = await guild.roles.fetch(Constants.ARCHIVE_ROLE_ID)
+            role.members.forEach(member => {
+                member.roles.remove(role)
+            })
+        })
+        .catch(err => console.error(err))
 })
 
 
@@ -63,7 +72,7 @@ client.on('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
 
-    if (interaction.commandName == 'welcome') {
+    if (interaction.commandName === 'welcome') {
         // Check if the user has permission: ADMINISTRATOR
         if (typeof interaction.member.permissions !== 'string' && !interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             await interaction.reply({
@@ -77,7 +86,7 @@ client.on('interactionCreate', async interaction => {
         if (channel === null) {
             console.warn('Cannot get welcome channel.')
             await interaction.reply({
-                content: 'Sorry, an unexpected error occured, please try again 😥',
+                content: 'Sorry, an unexpected error occurred, please try again 😥',
                 ephemeral: true
             })
             return
@@ -110,8 +119,8 @@ client.on('interactionCreate', async interaction => {
 })
 
 client.on('messageCreate', async message => {
-    if (message.author.id == 159985870458322944) { // 159985870458322944 is Bot MEE6
-        const simpMembers = (await message.guild.roles.fetch('888429562801844225')).members
+    if (message.author.id == Constants.BOT_MEE6_ID) {
+        const simpMembers = (await message.guild.roles.fetch(Constants.SIMP_ROLE_ID)).members
         if (simpMembers != null) {
             simpMembers.forEach(member => {
                 if (message.content.includes(member.id)) {
