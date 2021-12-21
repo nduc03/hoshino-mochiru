@@ -1,7 +1,7 @@
 const { Client, Collection, Intents, Permissions } = require('discord.js')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] })
+const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] })
 const fs = require('fs')
-const redis = require("redis")
+const rd = require("redis")
 
 const { UTCHoursEmitter } = require('./features/TimeCheck')
 const getInfo = require('./features/getInfo')
@@ -13,36 +13,36 @@ const Constants = require('./constants')
 
 
 require('dotenv').config()
-const checkTime = new UTCHoursEmitter()
-const rdClient = redis.createClient(process.env.REDIS_URL || 3000)
+const currentTime = new UTCHoursEmitter()
+const redis = rd.createClient(process.env.REDIS_URL || 3000)
 const token = (process.env.DEBUG == 'true') ? process.env.DEV_TOKEN : process.env.PRODUCT_TOKEN
 
 // Import all commands
-client.commands = new Collection()
+bot.commands = new Collection()
 fs.readdirSync('./commands')
     .filter(file => file.endsWith('.js'))
     .forEach(file => {
         const command = require(`./commands/${file}`)
         // set a new item in the Collection
         // with the key as the command name and the value as the exported module
-        client.commands.set(command.data.name, command)
+        bot.commands.set(command.data.name, command)
     })
 
 // Default welcome channel (it will be set if DB is initialized first time or DB is unavailable)
-let welcomeChannel = Constants.WELCOME_CHANNEL_ID
+let welcomeChannelID = Constants.WELCOME_CHANNEL_ID
 
-rdClient.on('error', function (error) {
+redis.on('error', function (error) {
     console.error(error)
 })
 
 
-checkTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
-    client.user.setStatus('online')
+currentTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
+    bot.user.setStatus('online')
 })
 
-checkTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
-    client.user.setStatus('idle')
-    client.guilds.fetch(Constants.SIEBEN_AND_HYDROCIVIK_SERVER_ID) // Sieben and Hydrocivik server
+currentTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
+    bot.user.setStatus('idle')
+    bot.guilds.fetch(Constants.SIEBEN_AND_HYDROCIVIK_SERVER_ID) // Sieben and Hydrocivik server
         .then(async guild => {
             const role = await guild.roles.fetch(Constants.ARCHIVE_ROLE_ID)
             role.members.forEach(member => {
@@ -53,23 +53,23 @@ checkTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
 })
 
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`)
+bot.on('ready', () => {
+    console.log(`Logged in as ${bot.user.tag}!`)
     // Check current time every 60000 milliseconds (1 minute)
-    checkTime.setTimeCheckInterval(60000).run() // Start checkTime callback
-    rdClient.get('welcomeChannel', (err, reply) => {
+    currentTime.setTimeCheckInterval(60000).run() // Start checkTime callback
+    redis.get('welcomeChannel', (err, reply) => {
         if (err) { console.error(err) }
 
         if (reply != null) {
-            welcomeChannel = reply // Retrieve channel id when bot start/restart
+            welcomeChannelID = reply // Retrieve channel id when bot start/restart
         }
         else {
-            rdClient.set('welcomeChannel', welcomeChannel)
+            redis.set('welcomeChannel', welcomeChannelID)
         }
     })
 })
 
-client.on('interactionCreate', async interaction => {
+bot.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
 
     if (interaction.commandName === 'welcome') {
@@ -93,8 +93,8 @@ client.on('interactionCreate', async interaction => {
         }
         if (channel.isText()) {
             // If user change welcome channel correctly
-            welcomeChannel = channel.id.toString()
-            rdClient.set('welcomeChannel', welcomeChannel) // Save channel id to Database
+            welcomeChannelID = channel.id.toString()
+            redis.set('welcomeChannel', welcomeChannelID) // Save channel id to Database
             await interaction.reply(`Welcome channel is now set to **${channel.name}**`)
         }
         else {
@@ -104,7 +104,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     // Find command object by command name
-    const command = client.commands.get(interaction.commandName)
+    const command = bot.commands.get(interaction.commandName)
 
     if (!command) return;
 
@@ -118,7 +118,7 @@ client.on('interactionCreate', async interaction => {
     }
 })
 
-client.on('messageCreate', async message => {
+bot.on('messageCreate', async message => {
     if (message.author.id == Constants.BOT_MEE6_ID) {
         const simpMembers = (await message.guild.roles.fetch(Constants.SIMP_ROLE_ID)).members
         if (simpMembers != null) {
@@ -137,7 +137,7 @@ client.on('messageCreate', async message => {
     }
 
     // If message not from myself, execute the code
-    if (message.author.id !== client.user.id) {
+    if (message.author.id !== bot.user.id) {
         const lastRecentMessage = message.content
         if (lastRecentMessage.startsWith('!info')) {
             // if command is !info, parse this command to list using parseMessageCommand
@@ -162,9 +162,14 @@ client.on('messageCreate', async message => {
     }
 })
 
-client.on('guildMemberAdd', member => {
+bot.on('guildMemberAdd', async member => {
     // Send a greeting to the new guild member
-    sendWelcome(client, welcomeChannel, member)
+    if (member.guild.channels.cache.has(welcomeChannelID)) {
+        await sendWelcome(bot, welcomeChannelID, member)
+    }
+    else {
+        console.log('New member added at other server.')
+    }
 })
 
-client.login(token)
+bot.login(token)
