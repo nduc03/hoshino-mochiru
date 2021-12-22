@@ -1,4 +1,4 @@
-const choice = require('./choice')
+const choice = require('../utils/choice')
 
 async function sendWelcome(client, channelId, user) {
     // Send welcome message to welcome channel every time a new user is join the guild

@@ -1,12 +1,12 @@
 # Hoshino Mochiru
 
-This is the project for developing a private Discord bot that being used in my friend server.
-The bot is currently stopped developing.
+This is a private Discord bot project that being used in my friend servers.
+The bot is currently stopped developing new feature.
 
 ## Installation prerequisite
 
 Node.js 16.6.0 or newer is **required**.  
-Redis database is recommended for the bot to work properly.
+Redis database is recommended for the bot to work properly.  
 Create .env file with correct configuration from template.env is required for the bot to work properly.  
 All the necessary npm packages is listed in ```package.json```, just use ```npm install``` to install all the dependencies.  
 
@@ -34,7 +34,7 @@ Command: ```node redisadmin del [key]```
 
 ### How to use TimeCheck
 
-Location: "\<path_to_project\>/features/TimeCheck.js"  
+Location: "\<path_to_project\>/utils/TimeCheck.js"  
 Import:
 
 ```js
@@ -47,7 +47,8 @@ Callback: no argument.
 Example:
 
 ```js
-checkTime.on('6h', () => {
+const currentTime = new UTCHoursEmitter()
+currentTime.on('6h', () => {
     // Do something
 })
 ```

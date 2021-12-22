@@ -1,21 +1,21 @@
 const { Client, Collection, Intents, Permissions } = require('discord.js')
-const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] })
 const fs = require('fs')
 const rd = require("redis")
 
-const { UTCHoursEmitter } = require('./features/TimeCheck')
-const getInfo = require('./features/getInfo')
-const sendWelcome = require('./features/sendWelcome')
-const choice = require('./features/choice')
-const parseMessageCommand = require('./features/parseMessageCommand')
-const images = require('./links/congratulation_images')
-const Constants = require('./constants')
+const { UTCHoursEmitter } = require('./utils/TimeCheck')
+const getInfo = require('./utils/getInfo')
+const choice = require('./utils/choice')
+const parseMessageCommand = require('./utils/parseMessageCommand')
+const sendWelcome = require('./functions/sendWelcome')
+const images = require('./constants/congratulation_images')
+const Constants = require('./constants/constants')
 
 
 require('dotenv').config()
 const currentTime = new UTCHoursEmitter()
 const redis = rd.createClient(process.env.REDIS_URL || 3000)
 const token = (process.env.DEBUG == 'true') ? process.env.DEV_TOKEN : process.env.PRODUCT_TOKEN
+const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] })
 
 // Import all commands
 bot.commands = new Collection()
@@ -42,7 +42,7 @@ currentTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
 
 currentTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
     bot.user.setStatus('idle')
-    bot.guilds.fetch(Constants.SIEBEN_AND_HYDROCIVIK_SERVER_ID) // Sieben and Hydrocivik server
+    bot.guilds.fetch(Constants.SIEBEN_AND_HYDROCIVIK_SERVER_ID)
         .then(async guild => {
             const role = await guild.roles.fetch(Constants.ARCHIVE_ROLE_ID)
             role.members.forEach(member => {
@@ -56,7 +56,7 @@ currentTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     // Check current time every 60000 milliseconds (1 minute)
-    currentTime.setTimeCheckInterval(60000).run() // Start checkTime callback
+    currentTime.setTimeCheckInterval(60000).run() // Start checking time
     redis.get('welcomeChannel', (err, reply) => {
         if (err) { console.error(err) }
 
