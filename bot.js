@@ -8,7 +8,7 @@ const choice = require('./utils/choice')
 const parseMessageCommand = require('./utils/parseMessageCommand')
 const sendWelcome = require('./functions/sendWelcome')
 const images = require('./constants/congratulation_images')
-const Constants = require('./constants/constants')
+const Constants = require('./constants/id_constants')
 
 
 require('dotenv').config()
