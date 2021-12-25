@@ -7,14 +7,14 @@
   },
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
+    "bufferutil": "^4.0.5",
     "discord-api-types": "^0.22.0",
     "discord.js": "^13.4.0",
     "dotenv": "^10.0.0",
-    "redis": "^3.1.2"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.3",
-    "utf-8-validate": "^5.0.5"
+    "erlpack": "github:discord/erlpack",
+    "redis": "^3.1.2",
+    "utf-8-validate": "^5.0.7",
+    "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
     "eslint": "^7.32.0"
