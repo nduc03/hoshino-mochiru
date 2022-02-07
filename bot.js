@@ -28,7 +28,8 @@ fs.readdirSync('./commands')
         bot.commands.set(command.data.name, command)
     })
 
-// Default welcome channel (it will be set if DB is initialized first time or DB is unavailable)
+// Default welcome channel
+// (it will be set to Constants.WELCOME_CHANNEL_ID if redis is initialized first time or redis is unavailable)
 let welcomeChannelID = Constants.WELCOME_CHANNEL_ID
 
 redis.on('error', function (error) {
@@ -42,14 +43,6 @@ currentTime.on('23h', () => { // 23h UTC is 6h in VN(GMT+7)
 
 currentTime.on('17h', () => { // 17h UTC is 0h in VN(GMT+7)
     bot.user.setStatus('idle')
-    bot.guilds.fetch(Constants.SIEBEN_AND_HYDROCIVIK_SERVER_ID)
-        .then(async guild => {
-            const role = await guild.roles.fetch(Constants.ARCHIVE_ROLE_ID)
-            role.members.forEach(member => {
-                member.roles.remove(role)
-            })
-        })
-        .catch(err => console.error(err))
 })
 
 
@@ -99,7 +92,7 @@ bot.on('interactionCreate', async interaction => {
         }
         else {
             // If user use command to voice channel or thread channel
-            await interaction.reply({ content: 'Text channel is required.', ephemeral: true })
+            await interaction.reply({ content: 'You can only set welcome channel to text channel.', ephemeral: true })
         }
     }
 
@@ -120,7 +113,13 @@ bot.on('interactionCreate', async interaction => {
 
 bot.on('messageCreate', async message => {
     if (message.author.id == Constants.BOT_MEE6_ID) {
-        const simpMembers = (await message.guild.roles.fetch(Constants.SIMP_ROLE_ID)).members
+        let simpMembers = null
+        try {
+            simpMembers = (await message.guild.roles.fetch(Constants.SIMP_ROLE_ID)).members
+        } catch (error) {
+            console.error('Cannot get simp members.')
+        }
+
         if (simpMembers != null) {
             simpMembers.forEach(member => {
                 if (message.content.includes(member.id)) {
@@ -142,15 +141,14 @@ bot.on('messageCreate', async message => {
         if (lastRecentMessage.startsWith('!info')) {
             // if command is !info, parse this command to list using parseMessageCommand
             // then get the second value of the array
-            // then use parseInfo() to get the info list
+            // then use getInfo() to get the info list
             // then save it to mentionInfoList
             const mentionInfoList = getInfo(parseMessageCommand(lastRecentMessage)[1])
-            // undefined when only have command without arguments, eg: "!info   "
-            // null when command has arguments but incorrect arguments or info can't be found,
-            // eg: "!info @not_exist_user", or "!info wrong_argument"
-            if (mentionInfoList === undefined) {
-                return
-            }
+            // mentionInfoList will undefined when only have command without arguments.
+            // example: "!info   "
+            // mentionInfoList will null when command has arguments but incorrect arguments or info can't be found.
+            // example: "!info @not_exist_user", or "!info wrong_argument"
+            if (mentionInfoList === undefined) return
             if (mentionInfoList !== null) {
                 // then pick 1 random file from mention list
                 await message.channel.send({ files: [choice(mentionInfoList)] })
