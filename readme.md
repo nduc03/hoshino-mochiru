@@ -29,7 +29,7 @@ Command: ```node register_cmd.js [release-mode] [optional-args]```
 
 Command: ```node redisadmin del [key]```
 
-- Deleted the specified key in database.
+- Delete the specified key in database.
 - Current key is being used in this bot: ```welcomeChannel```
 
 ### How to use TimeCheck
